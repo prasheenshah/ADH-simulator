@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hand-Drawn ADH Simulator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Gloria+Hallelujah&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background-color: #1e1e1e;
+      color: #ffffff;
+      font-family: 'Gloria Hallelujah', cursive;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+    img {
+      max-width: 90vw;
+      max-height: 65vh;
+      border: 2px solid #aaa;
+      background-color: #000;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+    }
+    input[type=range] {
+      width: 80%;
+      margin: 20px 0;
+    }
+    .meters {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    button {
+      background-color: #444;
+      color: white;
+      border: 2px solid #ccc;
+      padding: 12px 20px;
+      margin: 10px;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Hand-Drawn ADH Simulator</h1>
+  <img id="frameDisplay" src="frame_044.png" alt="Frame">
+  <br>
+  <input type="range" id="slider" min="0" max="87" value="44">
+  <br>
+  <button onclick="startIncrease()">⬆️ Increase ADH</button>
+  <button onclick="startDecrease()">⬇️ Decrease ADH</button>
+  <button onclick="stopPlayback()">⏸ Pause</button>
+  <div class="meters">
+    <p>ADH Level: <span id="adhLevel">50%</span></p>
+    <p>Serum Osm: <span id="serumOsm">270</span> mEq/L</p>
+    <p>Urine Osm: <span id="urineOsm">400</span> mOsm/kg</p>
+  </div>
+
+  <script>
+    const slider = document.getElementById("slider");
+    const frameDisplay = document.getElementById("frameDisplay");
+    const adhText = document.getElementById("adhLevel");
+    const serumText = document.getElementById("serumOsm");
+    const urineText = document.getElementById("urineOsm");
+
+    let playInterval = null;
+
+    slider.addEventListener("input", updateDisplay);
+
+    function updateDisplay() {
+      const frame = String(slider.value).padStart(3, '0');
+      frameDisplay.src = `frame_${frame}.png`;
+
+      const frameIndex = parseInt(slider.value);
+      const adhPct = Math.round((frameIndex / 87) * 100);
+      const serumOsm = 290 - Math.round((adhPct / 100) * 40);
+      const urineOsm = 50 + Math.round((adhPct / 100) * 750);
+
+      adhText.textContent = adhPct + "%";
+      serumText.textContent = serumOsm;
+      urineText.textContent = urineOsm;
+    }
+
+    function startIncrease() {
+      stopPlayback();
+      let current = parseInt(slider.value);
+      if (current < 44) current = 44;
+      playInterval = setInterval(() => {
+        if (current < 87) {
+          current++;
+          slider.value = current;
+          updateDisplay();
+        } else {
+          stopPlayback();
+        }
+      }, 80);
+    }
+
+    function startDecrease() {
+      stopPlayback();
+      let current = parseInt(slider.value);
+      if (current > 55) current = 55;
+      playInterval = setInterval(() => {
+        if (current > 0) {
+          current--;
+          slider.value = current;
+          updateDisplay();
+        } else {
+          stopPlayback();
+        }
+      }, 80);
+    }
+
+    function stopPlayback() {
+      if (playInterval) clearInterval(playInterval);
+    }
+
+    updateDisplay();
+  </script>
+</body>
+</html>
