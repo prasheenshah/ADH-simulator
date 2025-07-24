@@ -106,7 +106,6 @@
     function startDecrease() {
       stopPlayback();
       let current = parseInt(slider.value);
-      if (current > 55) current = 55;
       playInterval = setInterval(() => {
         if (current > 0) {
           current--;
