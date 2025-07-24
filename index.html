@@ -92,7 +92,6 @@
     function startIncrease() {
       stopPlayback();
       let current = parseInt(slider.value);
-      if (current < 24) current = 24;
       playInterval = setInterval(() => {
         if (current < 87) {
           current++;
